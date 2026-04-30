@@ -1,0 +1,134 @@
+[2026-04-27 14:53:44] [INFO]   example.c:9 Logger initialized
+[2026-04-27 14:53:44] [INFO]   example.c:12 This is log message 0, hello z-log
+[2026-04-27 14:53:44] [DEBUG]  example.c:13 Debug message 0
+[2026-04-27 14:53:44] [WARN]   example.c:14 Warning message 0
+[2026-04-27 14:53:44] [INFO]   example.c:12 This is log message 1, hello z-log
+[2026-04-27 14:53:44] [DEBUG]  example.c:13 Debug message 1
+[2026-04-27 14:53:44] [WARN]   example.c:14 Warning message 1
+[2026-04-27 14:53:44] [INFO]   example.c:12 This is log message 2, hello z-log
+[2026-04-27 14:53:44] [DEBUG]  example.c:13 Debug message 2
+[2026-04-27 14:53:44] [WARN]   example.c:14 Warning message 2
+[2026-04-27 14:53:44] [INFO]   example.c:12 This is log message 3, hello z-log
+[2026-04-27 14:53:44] [DEBUG]  example.c:13 Debug message 3
+[2026-04-27 14:53:44] [WARN]   example.c:14 Warning message 3
+[2026-04-27 14:53:44] [INFO]   example.c:12 This is log message 4, hello z-log
+[2026-04-27 14:53:44] [DEBUG]  example.c:13 Debug message 4
+[2026-04-27 14:53:44] [WARN]   example.c:14 Warning message 4
+[2026-04-27 14:53:45] [ERROR]  example.c:18 This is an error message
+[2026-04-27 15:00:38] [INFO]   example.c:9 Logger initialized
+[2026-04-27 15:00:38] [INFO]   example.c:12 This is log message 0, hello z-log
+[2026-04-27 15:00:38] [DEBUG]  example.c:13 Debug message 0
+[2026-04-27 15:00:38] [WARN]   example.c:14 Warning message 0
+[2026-04-27 15:00:38] [INFO]   example.c:12 This is log message 1, hello z-log
+[2026-04-27 15:00:38] [DEBUG]  example.c:13 Debug message 1
+[2026-04-27 15:00:38] [WARN]   example.c:14 Warning message 1
+[2026-04-27 15:00:38] [INFO]   example.c:12 This is log message 2, hello z-log
+[2026-04-27 15:00:38] [DEBUG]  example.c:13 Debug message 2
+[2026-04-27 15:00:38] [WARN]   example.c:14 Warning message 2
+[2026-04-27 15:00:38] [INFO]   example.c:12 This is log message 3, hello z-log
+[2026-04-27 15:00:38] [DEBUG]  example.c:13 Debug message 3
+[2026-04-27 15:00:38] [WARN]   example.c:14 Warning message 3
+[2026-04-27 15:00:38] [INFO]   example.c:12 This is log message 4, hello z-log
+[2026-04-27 15:00:38] [DEBUG]  example.c:13 Debug message 4
+[2026-04-27 15:00:38] [WARN]   example.c:14 Warning message 4
+[2026-04-27 15:00:38] [ERROR]  example.c:18 This is an error message
+[2026-04-27 15:03:12] [INFO]   example.c:9 Logger initialized
+[2026-04-27 15:03:12] [INFO]   example.c:12 This is log message 0, hello z-log
+[2026-04-27 15:03:12] [DEBUG]  example.c:13 Debug message 0
+[2026-04-27 15:03:12] [WARN]   example.c:14 Warning message 0
+[2026-04-27 15:03:12] [INFO]   example.c:12 This is log message 1, hello z-log
+[2026-04-27 15:03:12] [DEBUG]  example.c:13 Debug message 1
+[2026-04-27 15:03:12] [WARN]   example.c:14 Warning message 1
+[2026-04-27 15:03:12] [INFO]   example.c:12 This is log message 2, hello z-log
+[2026-04-27 15:03:12] [DEBUG]  example.c:13 Debug message 2
+[2026-04-27 15:03:12] [WARN]   example.c:14 Warning message 2
+[2026-04-27 15:03:12] [INFO]   example.c:12 This is log message 3, hello z-log
+[2026-04-27 15:03:12] [DEBUG]  example.c:13 Debug message 3
+[2026-04-27 15:03:12] [WARN]   example.c:14 Warning message 3
+[2026-04-27 15:03:12] [INFO]   example.c:12 This is log message 4, hello z-log
+[2026-04-27 15:03:12] [DEBUG]  example.c:13 Debug message 4
+[2026-04-27 15:03:12] [WARN]   example.c:14 Warning message 4
+[2026-04-27 15:03:12] [ERROR]  example.c:18 This is an error message
+[15:08:22] [INFO] src/example.c:7 hello world
+[15:08:34] [INFO] src/example.c:7 hello world
+[2026-04-27 15:12:46] [INFO]   example.c:9 Logger initialized
+[2026-04-27 15:12:46] [INFO]   example.c:12 This is log message 0, hello z-log
+[2026-04-27 15:12:46] [DEBUG]  example.c:13 Debug message 0
+[2026-04-27 15:12:46] [WARN]   example.c:14 Warning message 0
+[2026-04-27 15:12:46] [INFO]   example.c:12 This is log message 1, hello z-log
+[2026-04-27 15:12:46] [DEBUG]  example.c:13 Debug message 1
+[2026-04-27 15:12:46] [WARN]   example.c:14 Warning message 1
+[2026-04-27 15:12:46] [INFO]   example.c:12 This is log message 2, hello z-log
+[2026-04-27 15:12:46] [DEBUG]  example.c:13 Debug message 2
+[2026-04-27 15:12:46] [WARN]   example.c:14 Warning message 2
+[2026-04-27 15:12:46] [INFO]   example.c:12 This is log message 3, hello z-log
+[2026-04-27 15:12:46] [DEBUG]  example.c:13 Debug message 3
+[2026-04-27 15:12:46] [WARN]   example.c:14 Warning message 3
+[2026-04-27 15:12:46] [INFO]   example.c:12 This is log message 4, hello z-log
+[2026-04-27 15:12:46] [DEBUG]  example.c:13 Debug message 4
+[2026-04-27 15:12:46] [WARN]   example.c:14 Warning message 4
+[2026-04-27 15:12:46] [ERROR]  example.c:18 This is an error message
+[2026-04-27 15:36:06] [INFO]   example.c:9 Logger initialized
+[2026-04-27 15:36:06] [INFO]   example.c:12 This is log message 0, hello z-log
+[2026-04-27 15:36:06] [DEBUG]  example.c:13 Debug message 0
+[2026-04-27 15:36:06] [WARN]   example.c:14 Warning message 0
+[2026-04-27 15:36:06] [INFO]   example.c:12 This is log message 1, hello z-log
+[2026-04-27 15:36:06] [DEBUG]  example.c:13 Debug message 1
+[2026-04-27 15:36:06] [WARN]   example.c:14 Warning message 1
+[2026-04-27 15:36:06] [INFO]   example.c:12 This is log message 2, hello z-log
+[2026-04-27 15:36:06] [DEBUG]  example.c:13 Debug message 2
+[2026-04-27 15:36:06] [WARN]   example.c:14 Warning message 2
+[2026-04-27 15:36:06] [INFO]   example.c:12 This is log message 3, hello z-log
+[2026-04-27 15:36:06] [DEBUG]  example.c:13 Debug message 3
+[2026-04-27 15:36:06] [WARN]   example.c:14 Warning message 3
+[2026-04-27 15:36:06] [INFO]   example.c:12 This is log message 4, hello z-log
+[2026-04-27 15:36:06] [DEBUG]  example.c:13 Debug message 4
+[2026-04-27 15:36:06] [WARN]   example.c:14 Warning message 4
+[2026-04-27 15:36:06] [ERROR]  example.c:18 This is an error message
+[2026-04-27 15:53:38] [INFO]   example.c:9 Logger initialized
+[2026-04-27 15:53:38] [INFO]   example.c:12 This is log message 0, hello z-log
+[2026-04-27 15:53:38] [DEBUG]  example.c:13 Debug message 0
+[2026-04-27 15:53:38] [WARN]   example.c:14 Warning message 0
+[2026-04-27 15:53:39] [INFO]   example.c:12 This is log message 1, hello z-log
+[2026-04-27 15:53:39] [DEBUG]  example.c:13 Debug message 1
+[2026-04-27 15:53:39] [WARN]   example.c:14 Warning message 1
+[2026-04-27 15:53:39] [INFO]   example.c:12 This is log message 2, hello z-log
+[2026-04-27 15:53:39] [DEBUG]  example.c:13 Debug message 2
+[2026-04-27 15:53:39] [WARN]   example.c:14 Warning message 2
+[2026-04-27 15:53:39] [INFO]   example.c:12 This is log message 3, hello z-log
+[2026-04-27 15:53:39] [DEBUG]  example.c:13 Debug message 3
+[2026-04-27 15:53:39] [WARN]   example.c:14 Warning message 3
+[2026-04-27 15:53:39] [INFO]   example.c:12 This is log message 4, hello z-log
+[2026-04-27 15:53:39] [DEBUG]  example.c:13 Debug message 4
+[2026-04-27 15:53:39] [WARN]   example.c:14 Warning message 4
+[2026-04-27 15:53:39] [ERROR]  example.c:18 This is an error message
+[2026-04-29 15:51:35] [INFO]   example.c:9 Logger initialized
+[2026-04-29 15:51:35] [INFO]   example.c:12 This is log message 0, hello z-log
+[2026-04-29 15:51:35] [WARN]   example.c:14 Warning message 0
+[2026-04-29 15:51:35] [INFO]   example.c:12 This is log message 1, hello z-log
+[2026-04-29 15:51:35] [WARN]   example.c:14 Warning message 1
+[2026-04-29 15:51:35] [INFO]   example.c:12 This is log message 2, hello z-log
+[2026-04-29 15:51:35] [WARN]   example.c:14 Warning message 2
+[2026-04-29 15:51:35] [INFO]   example.c:12 This is log message 3, hello z-log
+[2026-04-29 15:51:35] [WARN]   example.c:14 Warning message 3
+[2026-04-29 15:51:36] [INFO]   example.c:12 This is log message 4, hello z-log
+[2026-04-29 15:51:36] [WARN]   example.c:14 Warning message 4
+[2026-04-29 15:51:36] [ERROR]  example.c:18 This is an error message
+[2026-04-29 15:51:52] [INFO]   example.c:9 Logger initialized
+[2026-04-29 15:51:52] [INFO]   example.c:12 This is log message 0, hello z-log
+[2026-04-29 15:51:52] [DEBUG]  example.c:13 Debug message 0
+[2026-04-29 15:51:52] [WARN]   example.c:14 Warning message 0
+[2026-04-29 15:51:52] [INFO]   example.c:12 This is log message 1, hello z-log
+[2026-04-29 15:51:52] [DEBUG]  example.c:13 Debug message 1
+[2026-04-29 15:51:52] [WARN]   example.c:14 Warning message 1
+[2026-04-29 15:51:52] [INFO]   example.c:12 This is log message 2, hello z-log
+[2026-04-29 15:51:52] [DEBUG]  example.c:13 Debug message 2
+[2026-04-29 15:51:52] [WARN]   example.c:14 Warning message 2
+[2026-04-29 15:51:52] [INFO]   example.c:12 This is log message 3, hello z-log
+[2026-04-29 15:51:52] [DEBUG]  example.c:13 Debug message 3
+[2026-04-29 15:51:52] [WARN]   example.c:14 Warning message 3
+[2026-04-29 15:51:52] [INFO]   example.c:12 This is log message 4, hello z-log
+[2026-04-29 15:51:52] [DEBUG]  example.c:13 Debug message 4
+[2026-04-29 15:51:52] [WARN]   example.c:14 Warning message 4
+[2026-04-29 15:51:52] [ERROR]  example.c:18 This is an error message
+[2026-04-29 15:51:59] [ERROR]  example.c:18 This is an error message
