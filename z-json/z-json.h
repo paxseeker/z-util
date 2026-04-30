@@ -52,7 +52,6 @@ void z_json_free(ZJson *json);
 #endif
 
 #endif /* Z_JSON_H */
-#define Z_JSON_IMPLEMENTATION
 #ifdef Z_JSON_IMPLEMENTATION
 
 #include <stdio.h>
