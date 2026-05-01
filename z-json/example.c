@@ -150,10 +150,14 @@ int main(void) {
     z_json_object_set(pretty_obj, "array", pretty_arr);
 
     size_t pretty_len;
-    char *pretty_str = z_json_stringify_pretty(pretty_obj, &pretty_len, 2);
+    char *    pretty_str = z_json_stringify_pretty(pretty_obj, &pretty_len, 2);
     if (pretty_str) {
         printf("Pretty JSON (indent=2):\n%s\n", pretty_str);
         free(pretty_str);
+    }
+
+    if (z_json_write_file_pretty(pretty_obj, "pretty_output.json", Z_JSON_DEFAULT_INDENT)) {
+        printf("Written pretty JSON to pretty_output.json with indent=%d\n", Z_JSON_DEFAULT_INDENT);
     }
 
     z_json_free(pretty_obj);

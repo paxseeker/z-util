@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define Z_JSON_DEFAULT_INDENT 4
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -41,6 +43,7 @@ typedef struct ZJson {
 ZJson *z_json_parse_str(const char *str);
 ZJson *z_json_parse_file(const char *filename);
 bool z_json_write_file(ZJson *json, const char *filename);
+bool z_json_write_file_pretty(ZJson *json, const char *filename, int indent);
 
 ZJson *z_json_create_null(void);
 ZJson *z_json_create_string(const char *str);
@@ -808,6 +811,23 @@ bool z_json_write_file(ZJson *json, const char *filename) {
 
     size_t len;
     char *str = z_json_stringify(json, &len);
+    if (!str) return false;
+
+    FILE *f = fopen(filename, "wb");
+    if (!f) { free(str); return false; }
+
+    size_t written = fwrite(str, 1, len, f);
+    fclose(f);
+    free(str);
+
+    return written == len;
+}
+
+bool z_json_write_file_pretty(ZJson *json, const char *filename, int indent) {
+    if (!json || !filename) return false;
+
+    size_t len;
+    char *str = z_json_stringify_pretty(json, &len, indent);
     if (!str) return false;
 
     FILE *f = fopen(filename, "wb");
