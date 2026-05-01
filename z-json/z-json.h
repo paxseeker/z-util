@@ -59,6 +59,7 @@ ZJson *z_json_array_get(ZJson *arr, size_t index);
 size_t z_json_array_size(ZJson *arr);
 ZJson *z_json_get_path(ZJson *json, const char *path);
 char *z_json_stringify(ZJson *json, size_t *out_len);
+char *z_json_stringify_pretty(ZJson *json, size_t *out_len, int indent);
 void z_json_free(ZJson *json);
 
 #ifdef __cplusplus
@@ -499,6 +500,171 @@ char *z_json_stringify(ZJson *json, size_t *out_len) {
     buf[0] = '\0';
 
     z_json_stringify_value(json, &buf, &pos, &cap);
+    if (out_len) *out_len = pos;
+    return buf;
+}
+
+static void z_json_add_indent(char **buf, size_t *pos, size_t *cap, int level, const char *indent_str) {
+    if (*pos + 1 >= *cap) {
+        *cap = *cap * 2;
+        *buf = (char *)realloc(*buf, *cap);
+    }
+    (*buf)[(*pos)++] = '\n';
+    (*buf)[*pos] = '\0';
+
+    for (int i = 0; i < level; i++) {
+        size_t indent_len = strlen(indent_str);
+        if (*pos + indent_len >= *cap) {
+            *cap = *cap * 2;
+            *buf = (char *)realloc(*buf, *cap);
+        }
+        strncat(*buf, indent_str, indent_len);
+        *pos += indent_len;
+    }
+}
+
+static void z_json_stringify_value_pretty(ZJson *json, char **buf, size_t *pos, size_t *cap, int indent_level, const char *indent_str) {
+    if (!json) return;
+
+    switch (json->type) {
+        case Z_JSON_NULL:
+            if (*pos + 4 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+            strncat(*buf, "null", 4);
+            *pos += 4;
+            break;
+        case Z_JSON_BOOL:
+            if (json->value.bool_val) {
+                if (*pos + 4 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                strncat(*buf, "true", 4);
+                *pos += 4;
+            } else {
+                if (*pos + 5 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                strncat(*buf, "false", 5);
+                *pos += 5;
+            }
+            break;
+        case Z_JSON_NUMBER: {
+            char num_str[64];
+            snprintf(num_str, sizeof(num_str), "%.15g", json->value.num_val);
+            size_t num_len = strlen(num_str);
+            if (*pos + num_len >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+            strncat(*buf, num_str, num_len);
+            *pos += num_len;
+            break;
+        }
+        case Z_JSON_STRING: {
+            if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+            (*buf)[(*pos)++] = '"';
+            (*buf)[*pos] = '\0';
+
+            const char *s = json->value.str_val;
+            while (*s) {
+                if (*s == '"' || *s == '\\' || *s == '\n' || *s == '\r' || *s == '\t') {
+                    if (*pos + 2 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                    (*buf)[(*pos)++] = '\\';
+                    (*buf)[(*pos)++] = *s == '"' ? '"' : *s == '\\' ? '\\' : *s == '\n' ? 'n' : *s == '\r' ? 'r' : 't';
+                    (*buf)[*pos] = '\0';
+                } else {
+                    if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                    (*buf)[(*pos)++] = *s;
+                    (*buf)[*pos] = '\0';
+                }
+                s++;
+            }
+
+            if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+            (*buf)[(*pos)++] = '"';
+            (*buf)[*pos] = '\0';
+            break;
+        }
+        case Z_JSON_ARRAY: {
+            if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+            (*buf)[(*pos)++] = '[';
+            (*buf)[*pos] = '\0';
+
+            for (size_t i = 0; i < json->value.array.count; i++) {
+                z_json_add_indent(buf, pos, cap, indent_level + 1, indent_str);
+                z_json_stringify_value_pretty(json->value.array.items[i], buf, pos, cap, indent_level + 1, indent_str);
+                if (i < json->value.array.count - 1) {
+                    if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                    (*buf)[(*pos)++] = ',';
+                    (*buf)[*pos] = '\0';
+                }
+            }
+
+            if (json->value.array.count > 0) {
+                z_json_add_indent(buf, pos, cap, indent_level, indent_str);
+            }
+
+            if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+            (*buf)[(*pos)++] = ']';
+            (*buf)[*pos] = '\0';
+            break;
+        }
+        case Z_JSON_OBJECT: {
+            if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+            (*buf)[(*pos)++] = '{';
+            (*buf)[*pos] = '\0';
+
+            for (size_t i = 0; i < json->value.object.count; i++) {
+                z_json_add_indent(buf, pos, cap, indent_level + 1, indent_str);
+
+                if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                (*buf)[(*pos)++] = '"';
+                (*buf)[*pos] = '\0';
+
+                const char *k = json->value.object.keys[i];
+                while (*k) {
+                    if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                    (*buf)[(*pos)++] = *k;
+                    (*buf)[*pos] = '\0';
+                    k++;
+                }
+
+                if (*pos + 3 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                (*buf)[(*pos)++] = '"';
+                (*buf)[(*pos)++] = ':';
+                (*buf)[(*pos)++] = ' ';
+                (*buf)[*pos] = '\0';
+
+                z_json_stringify_value_pretty(json->value.object.values[i], buf, pos, cap, indent_level + 1, indent_str);
+
+                if (i < json->value.object.count - 1) {
+                    if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+                    (*buf)[(*pos)++] = ',';
+                    (*buf)[*pos] = '\0';
+                }
+            }
+
+            if (json->value.object.count > 0) {
+                z_json_add_indent(buf, pos, cap, indent_level, indent_str);
+            }
+
+            if (*pos + 1 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
+            (*buf)[(*pos)++] = '}';
+            (*buf)[*pos] = '\0';
+            break;
+        }
+    }
+}
+
+char *z_json_stringify_pretty(ZJson *json, size_t *out_len, int indent) {
+    if (!json) { if (out_len) *out_len = 0; return NULL; }
+    if (indent <= 0) return z_json_stringify(json, out_len);
+
+    char *indent_str = (char *)malloc(indent + 1);
+    if (!indent_str) return NULL;
+    for (int i = 0; i < indent; i++) indent_str[i] = ' ';
+    indent_str[indent] = '\0';
+
+    size_t pos = 0, cap = 256;
+    char *buf = (char *)malloc(cap);
+    if (!buf) { free(indent_str); return NULL; }
+    buf[0] = '\0';
+
+    z_json_stringify_value_pretty(json, &buf, &pos, &cap, 0, indent_str);
+
+    free(indent_str);
     if (out_len) *out_len = pos;
     return buf;
 }

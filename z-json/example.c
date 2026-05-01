@@ -135,6 +135,28 @@ int main(void) {
         printf("Written to output.json\n");
     }
 
+    printf("\n--- Testing pretty output ---\n");
+    ZJson *pretty_obj = z_json_create_object();
+    z_json_object_set(pretty_obj, "name", z_json_create_string("test"));
+    z_json_object_set(pretty_obj, "version", z_json_create_number(1.0));
+
+    ZJson *nested = z_json_create_object();
+    z_json_object_set(nested, "key", z_json_create_string("value"));
+    z_json_object_set(pretty_obj, "nested", nested);
+
+    ZJson *pretty_arr = z_json_create_array();
+    z_json_array_append(pretty_arr, z_json_create_number(1));
+    z_json_array_append(pretty_arr, z_json_create_number(2));
+    z_json_object_set(pretty_obj, "array", pretty_arr);
+
+    size_t pretty_len;
+    char *pretty_str = z_json_stringify_pretty(pretty_obj, &pretty_len, 2);
+    if (pretty_str) {
+        printf("Pretty JSON (indent=2):\n%s\n", pretty_str);
+        free(pretty_str);
+    }
+
+    z_json_free(pretty_obj);
     z_json_free(obj);
     return 0;
 }
