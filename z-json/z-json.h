@@ -40,6 +40,20 @@ typedef struct ZJson {
 
 ZJson *z_json_parse_str(const char *str);
 ZJson *z_json_parse_file(const char *filename);
+bool z_json_write_file(ZJson *json, const char *filename);
+
+ZJson *z_json_create_null(void);
+ZJson *z_json_create_string(const char *str);
+ZJson *z_json_create_number(double num);
+ZJson *z_json_create_bool(bool val);
+ZJson *z_json_create_object(void);
+ZJson *z_json_create_array(void);
+
+bool z_json_object_set(ZJson *obj, const char *key, ZJson *value);
+bool z_json_object_remove(ZJson *obj, const char *key);
+bool z_json_array_append(ZJson *arr, ZJson *value);
+bool z_json_array_remove(ZJson *arr, size_t index);
+
 ZJson *z_json_object_get(ZJson *obj, const char *key);
 ZJson *z_json_array_get(ZJson *arr, size_t index);
 size_t z_json_array_size(ZJson *arr);
@@ -487,6 +501,157 @@ char *z_json_stringify(ZJson *json, size_t *out_len) {
     z_json_stringify_value(json, &buf, &pos, &cap);
     if (out_len) *out_len = pos;
     return buf;
+}
+
+ZJson *z_json_create_null(void) {
+    ZJson *json = (ZJson *)malloc(sizeof(ZJson));
+    if (!json) return NULL;
+    json->type = Z_JSON_NULL;
+    return json;
+}
+
+ZJson *z_json_create_string(const char *str) {
+    ZJson *json = (ZJson *)malloc(sizeof(ZJson));
+    if (!json) return NULL;
+    json->type = Z_JSON_STRING;
+    json->value.str_val = str ? strdup(str) : NULL;
+    return json;
+}
+
+ZJson *z_json_create_number(double num) {
+    ZJson *json = (ZJson *)malloc(sizeof(ZJson));
+    if (!json) return NULL;
+    json->type = Z_JSON_NUMBER;
+    json->value.num_val = num;
+    return json;
+}
+
+ZJson *z_json_create_bool(bool val) {
+    ZJson *json = (ZJson *)malloc(sizeof(ZJson));
+    if (!json) return NULL;
+    json->type = Z_JSON_BOOL;
+    json->value.bool_val = val;
+    return json;
+}
+
+ZJson *z_json_create_object(void) {
+    ZJson *json = (ZJson *)malloc(sizeof(ZJson));
+    if (!json) return NULL;
+    json->type = Z_JSON_OBJECT;
+    json->value.object.keys = NULL;
+    json->value.object.values = NULL;
+    json->value.object.count = 0;
+    json->value.object.capacity = 0;
+    return json;
+}
+
+ZJson *z_json_create_array(void) {
+    ZJson *json = (ZJson *)malloc(sizeof(ZJson));
+    if (!json) return NULL;
+    json->type = Z_JSON_ARRAY;
+    json->value.array.items = NULL;
+    json->value.array.count = 0;
+    json->value.array.capacity = 0;
+    return json;
+}
+
+static int z_json_object_find_index(ZJson *obj, const char *key) {
+    for (size_t i = 0; i < obj->value.object.count; i++) {
+        if (strcmp(obj->value.object.keys[i], key) == 0) {
+            return (int)i;
+        }
+    }
+    return -1;
+}
+
+bool z_json_object_set(ZJson *obj, const char *key, ZJson *value) {
+    if (!obj || obj->type != Z_JSON_OBJECT || !key || !value) return false;
+
+    int idx = z_json_object_find_index(obj, key);
+    if (idx >= 0) {
+        z_json_free(obj->value.object.values[idx]);
+        obj->value.object.values[idx] = value;
+        return true;
+    }
+
+    if (obj->value.object.count >= obj->value.object.capacity) {
+        size_t new_cap = obj->value.object.capacity == 0 ? 8 : obj->value.object.capacity * 2;
+        const char **new_keys = (const char **)realloc(obj->value.object.keys, new_cap * sizeof(const char *));
+        ZJson **new_values = (ZJson **)realloc(obj->value.object.values, new_cap * sizeof(ZJson *));
+        if (!new_keys || !new_values) return false;
+        obj->value.object.keys = new_keys;
+        obj->value.object.values = new_values;
+        obj->value.object.capacity = new_cap;
+    }
+
+    char *key_dup = strdup(key);
+    if (!key_dup) return false;
+
+    obj->value.object.keys[obj->value.object.count] = key_dup;
+    obj->value.object.values[obj->value.object.count] = value;
+    obj->value.object.count++;
+    return true;
+}
+
+bool z_json_object_remove(ZJson *obj, const char *key) {
+    if (!obj || obj->type != Z_JSON_OBJECT || !key) return false;
+
+    int idx = z_json_object_find_index(obj, key);
+    if (idx < 0) return false;
+
+    free((void *)obj->value.object.keys[idx]);
+    z_json_free(obj->value.object.values[idx]);
+
+    for (size_t i = idx; i < obj->value.object.count - 1; i++) {
+        obj->value.object.keys[i] = obj->value.object.keys[i + 1];
+        obj->value.object.values[i] = obj->value.object.values[i + 1];
+    }
+    obj->value.object.count--;
+    return true;
+}
+
+bool z_json_array_append(ZJson *arr, ZJson *value) {
+    if (!arr || arr->type != Z_JSON_ARRAY || !value) return false;
+
+    if (arr->value.array.count >= arr->value.array.capacity) {
+        size_t new_cap = arr->value.array.capacity == 0 ? 8 : arr->value.array.capacity * 2;
+        ZJson **new_items = (ZJson **)realloc(arr->value.array.items, new_cap * sizeof(ZJson *));
+        if (!new_items) return false;
+        arr->value.array.items = new_items;
+        arr->value.array.capacity = new_cap;
+    }
+
+    arr->value.array.items[arr->value.array.count++] = value;
+    return true;
+}
+
+bool z_json_array_remove(ZJson *arr, size_t index) {
+    if (!arr || arr->type != Z_JSON_ARRAY || index >= arr->value.array.count) return false;
+
+    z_json_free(arr->value.array.items[index]);
+
+    for (size_t i = index; i < arr->value.array.count - 1; i++) {
+        arr->value.array.items[i] = arr->value.array.items[i + 1];
+    }
+    arr->value.array.count--;
+    return true;
+}
+
+bool z_json_write_file(ZJson *json, const char *filename) {
+    if (!json || !filename) return false;
+
+    size_t len;
+    char *str = z_json_stringify(json, &len);
+    if (!str) return false;
+
+    FILE *f = fopen(filename, "wb");
+    if (!f) { free(str); return false; }
+
+    size_t written = fwrite(str, 1, len, f);
+    fclose(f);
+    free(str);
+
+    return written == len;
 }
 
 void z_json_free(ZJson *json) {

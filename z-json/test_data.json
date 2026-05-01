@@ -1,0 +1,11 @@
+{
+  "name": "z-json",
+  "version": 1.0,
+  "active": true,
+  "tags": ["json", "parser", "stb-style"],
+  "author": {
+    "name": "zjx",
+    "unicode": "\u4F60\u597D"
+  },
+  "null_val": null
+}

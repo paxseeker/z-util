@@ -80,6 +80,18 @@ int main(void) {
         printf("null_val: null\n");
     }
 
+    printf("\n--- Testing file read ---\n");
+    ZJson *file_root = z_json_parse_file("test_data.json");
+    if (!file_root) {
+        printf("Failed to parse JSON from file\n");
+    } else {
+        ZJson *file_name = z_json_object_get(file_root, "name");
+        if (file_name && file_name->type == Z_JSON_STRING) {
+            printf("file name: %s\n", file_name->value.str_val);
+        }
+        z_json_free(file_root);
+    }
+
     size_t json_len;
     char *serialized = z_json_stringify(root, &json_len);
     if (serialized) {
@@ -88,5 +100,41 @@ int main(void) {
     }
 
     z_json_free(root);
+
+    printf("\n--- Testing JSON building and modification ---\n");
+
+    ZJson *obj = z_json_create_object();
+    z_json_object_set(obj, "name", z_json_create_string("test"));
+    z_json_object_set(obj, "version", z_json_create_number(2.5));
+    z_json_object_set(obj, "active", z_json_create_bool(true));
+    z_json_object_set(obj, "null_val", z_json_create_null());
+
+    ZJson *arr = z_json_create_array();
+    z_json_array_append(arr, z_json_create_string("a"));
+    z_json_array_append(arr, z_json_create_number(1));
+    z_json_array_append(arr, z_json_create_bool(false));
+    z_json_object_set(obj, "items", arr);
+
+    serialized = z_json_stringify(obj, &json_len);
+    if (serialized) {
+        printf("Built object: %s\n", serialized);
+        free(serialized);
+    }
+
+    z_json_object_remove(obj, "null_val");
+    z_json_array_remove(arr, 1);
+    z_json_object_set(obj, "added", z_json_create_string("new"));
+
+    serialized = z_json_stringify(obj, &json_len);
+    if (serialized) {
+        printf("Modified object: %s\n", serialized);
+        free(serialized);
+    }
+
+    if (z_json_write_file(obj, "output.json")) {
+        printf("Written to output.json\n");
+    }
+
+    z_json_free(obj);
     return 0;
 }
