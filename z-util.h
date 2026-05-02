@@ -14,10 +14,7 @@
 #define Z_UTIL_CONCAT(a, b) Z_UTIL_CONCAT_(a, b)
 
 #ifdef __cplusplus
-#define Z_UTIL_EXTERN extern "C" \
-{
-#else
-#define Z_UTIL_EXTERN extern
+extern "C" {
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
