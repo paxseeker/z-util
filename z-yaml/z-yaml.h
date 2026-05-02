@@ -42,8 +42,7 @@ typedef struct ZYaml {
 
 ZYaml *z_yaml_parse_str(const char *str);
 ZYaml *z_yaml_parse_file(const char *filename);
-bool z_yaml_write_file(ZYaml *yaml, const char *filename);
-bool z_yaml_write_file_pretty(ZYaml *yaml, const char *filename, int indent);
+bool z_yaml_write_file(ZYaml *yaml, const char *filename, int indent);
 
 ZYaml *z_yaml_create_null(void);
 ZYaml *z_yaml_create_string(const char *str);
@@ -61,8 +60,7 @@ ZYaml *z_yaml_object_get(ZYaml *obj, const char *key);
 ZYaml *z_yaml_array_get(ZYaml *arr, size_t index);
 size_t z_yaml_array_size(ZYaml *arr);
 ZYaml *z_yaml_get_path(ZYaml *yaml, const char *path);
-char *z_yaml_stringify(ZYaml *yaml, size_t *out_len);
-char *z_yaml_stringify_pretty(ZYaml *yaml, size_t *out_len, int indent);
+char *z_yaml_stringify(ZYaml *yaml, size_t *out_len, int indent);
 void z_yaml_free(ZYaml *yaml);
 
 #ifdef __cplusplus
@@ -883,22 +881,6 @@ static void z_yaml_stringify_value(ZYaml *yaml, char **buf, size_t *pos, size_t 
     }
 }
 
-char *z_yaml_stringify(ZYaml *yaml, size_t *out_len) {
-    if (!yaml) { if (out_len) *out_len = 0; return NULL; }
-    size_t pos = 0, cap = 256;
-    char *buf = (char *)malloc(cap);
-    if (!buf) return NULL;
-    buf[0] = '\0';
-
-    z_yaml_stringify_value(yaml, &buf, &pos, &cap);
-    if (pos + 1 >= cap) {
-        buf = (char *)realloc(buf, pos + 1);
-    }
-    buf[pos] = '\0';
-    if (out_len) *out_len = pos;
-    return buf;
-}
-
 static void z_yaml_add_indent(char **buf, size_t *pos, size_t *cap, int level, const char *indent_str) {
     if (*pos + 1 >= *cap) {
         *cap = *cap * 2;
@@ -1121,9 +1103,22 @@ static void z_yaml_stringify_value_pretty(ZYaml *yaml, char **buf, size_t *pos, 
     }
 }
 
-char *z_yaml_stringify_pretty(ZYaml *yaml, size_t *out_len, int indent) {
+char *z_yaml_stringify(ZYaml *yaml, size_t *out_len, int indent) {
     if (!yaml) { if (out_len) *out_len = 0; return NULL; }
-    if (indent <= 0) return z_yaml_stringify(yaml, out_len);
+
+    if (indent <= 0) {
+        size_t pos = 0, cap = 256;
+        char *buf = (char *)malloc(cap);
+        if (!buf) return NULL;
+        buf[0] = '\0';
+        z_yaml_stringify_value(yaml, &buf, &pos, &cap);
+        if (pos + 1 >= cap) {
+            buf = (char *)realloc(buf, pos + 1);
+        }
+        buf[pos] = '\0';
+        if (out_len) *out_len = pos;
+        return buf;
+    }
 
     char *indent_str = (char *)malloc(indent + 1);
     if (!indent_str) return NULL;
@@ -1138,6 +1133,10 @@ char *z_yaml_stringify_pretty(ZYaml *yaml, size_t *out_len, int indent) {
     z_yaml_stringify_value_pretty(yaml, &buf, &pos, &cap, 0, indent_str, false);
 
     free(indent_str);
+    if (pos + 1 >= cap) {
+        buf = (char *)realloc(buf, pos + 1);
+    }
+    buf[pos] = '\0';
     if (out_len) *out_len = pos;
     return buf;
 }
@@ -1276,28 +1275,11 @@ bool z_yaml_array_remove(ZYaml *arr, size_t index) {
     return true;
 }
 
-bool z_yaml_write_file(ZYaml *yaml, const char *filename) {
+bool z_yaml_write_file(ZYaml *yaml, const char *filename, int indent) {
     if (!yaml || !filename) return false;
 
     size_t len;
-    char *str = z_yaml_stringify(yaml, &len);
-    if (!str) return false;
-
-    FILE *f = fopen(filename, "wb");
-    if (!f) { free(str); return false; }
-
-    size_t written = fwrite(str, 1, len, f);
-    fclose(f);
-    free(str);
-
-    return written == len;
-}
-
-bool z_yaml_write_file_pretty(ZYaml *yaml, const char *filename, int indent) {
-    if (!yaml || !filename) return false;
-
-    size_t len;
-    char *str = z_yaml_stringify_pretty(yaml, &len, indent);
+    char *str = z_yaml_stringify(yaml, &len, indent);
     if (!str) return false;
 
     FILE *f = fopen(filename, "wb");

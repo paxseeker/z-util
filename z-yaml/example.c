@@ -91,7 +91,7 @@ int main(void) {
     z_yaml_object_set(obj, "items", arr);
 
     size_t yaml_len;
-    char *serialized = z_yaml_stringify(obj, &yaml_len);
+    char *serialized = z_yaml_stringify(obj, &yaml_len, 0);
     if (serialized) {
         printf("Built object: %s\n", serialized);
         free(serialized);
@@ -101,17 +101,17 @@ int main(void) {
     z_yaml_array_remove(arr, 1);
     z_yaml_object_set(obj, "added", z_yaml_create_string("new"));
 
-    serialized = z_yaml_stringify(obj, &yaml_len);
+    serialized = z_yaml_stringify(obj, &yaml_len, 0);
     if (serialized) {
         printf("Modified object: %s\n", serialized);
         free(serialized);
     }
 
-    if (z_yaml_write_file(obj, "output.yaml")) {
+    if (z_yaml_write_file(obj, "output.yaml", 2)) {
         printf("Written to output.yaml\n");
     }
 
-    printf("\n--- Testing pretty output ---\n");
+    printf("\n--- Testing format output ---\n");
     ZYaml *pretty_obj = z_yaml_create_object();
     z_yaml_object_set(pretty_obj, "name", z_yaml_create_string("test"));
     z_yaml_object_set(pretty_obj, "version", z_yaml_create_number(1.0));
@@ -126,14 +126,14 @@ int main(void) {
     z_yaml_object_set(pretty_obj, "array", pretty_arr);
 
     size_t pretty_len;
-    char *pretty_str = z_yaml_stringify_pretty(pretty_obj, &pretty_len, 2);
+    char *pretty_str = z_yaml_stringify(pretty_obj, &pretty_len, 2);
     if (pretty_str) {
-        printf("Pretty YAML (indent=2):\n%s\n", pretty_str);
+        printf("YAML (indent=2):\n%s\n", pretty_str);
         free(pretty_str);
     }
 
-    if (z_yaml_write_file_pretty(pretty_obj, "pretty_output.yaml", Z_YAML_DEFAULT_INDENT)) {
-        printf("Written pretty YAML to pretty_output.yaml with indent=%d\n", Z_YAML_DEFAULT_INDENT);
+    if (z_yaml_write_file(pretty_obj, "pretty_output.yaml", Z_YAML_DEFAULT_INDENT)) {
+        printf("Written YAML to pretty_output.yaml with indent=%d\n", Z_YAML_DEFAULT_INDENT);
     }
 
     z_yaml_free(pretty_obj);
