@@ -396,7 +396,7 @@ ZJson *z_json_get_path(ZJson *json, const char *path) {
                 if (!current) { free(path_copy); return NULL; }
             }
 
-            if (bracket + 1) {
+            if (bracket[1] != '\0') {
                 int index = atoi(bracket + 1);
                 current = z_json_array_get(current, (size_t)index);
                 if (!current) { free(path_copy); return NULL; }
@@ -532,17 +532,20 @@ static void z_json_stringify_value_pretty(ZJson *json, char **buf, size_t *pos, 
     switch (json->type) {
         case Z_JSON_NULL:
             if (*pos + 4 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
-            strncat(*buf, "null", 4);
+            memcpy(*buf + *pos, "null", 4);
+            (*buf)[*pos + 4] = '\0';
             *pos += 4;
             break;
         case Z_JSON_BOOL:
             if (json->value.bool_val) {
                 if (*pos + 4 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
-                strncat(*buf, "true", 4);
+                memcpy(*buf + *pos, "true", 4);
+                (*buf)[*pos + 4] = '\0';
                 *pos += 4;
             } else {
                 if (*pos + 5 >= *cap) { *cap = *cap * 2; *buf = (char *)realloc(*buf, *cap); }
-                strncat(*buf, "false", 5);
+                memcpy(*buf + *pos, "false", 5);
+                (*buf)[*pos + 5] = '\0';
                 *pos += 5;
             }
             break;
